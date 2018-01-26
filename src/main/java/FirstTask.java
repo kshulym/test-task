@@ -3,9 +3,9 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
-import ui.detailsPage;
-import ui.homePage;
-import ui.resultsPage;
+import ui.DetailsPage;
+import ui.HomePage;
+import ui.ResultsPage;
 
 import java.util.concurrent.TimeUnit;
 
@@ -23,25 +23,29 @@ public class FirstTask {
 
     @Test
     public void testTitle() {
-        homePage homePage = new homePage(driver);
+        HomePage homePage = new HomePage(driver);
         homePage.selectLocation("Toronto");
+        homePage.setDates("27/02/2019", "28/03/2019");
         homePage.selectAdults("3");
         homePage.selectChild("2");
 
-        resultsPage resultsPage = homePage.performSearch();
-        String numberOfResults = resultsPage.countResults();
-        System.out.println(numberOfResults);
+        ResultsPage resultsPage = homePage.performSearch();
+        int numberOfResults = resultsPage.countResults();
+        System.out.println("The Number of Results is: " + numberOfResults);
 
-        if (numberOfResults.equals(String.valueOf(0))) {
+        if(numberOfResults == 0){
             driver.navigate().back();
-            homePage homePageNew = new homePage(driver);
-            homePageNew.selectAdults("3");
-            homePageNew.selectChild("2");
-            resultsPage resultsPageNew = homePage.performSearch();
-            System.out.println(resultsPageNew.countResults());
-            detailsPage detailsPage = resultsPage.goToDetails();
+            homePage.waitPreloader();
+            homePage.selectAdults("3");
+            homePage.selectChild("2");
+            resultsPage = homePage.performSearch();
+
+            numberOfResults = resultsPage.countResults();
+            System.out.println("The Number of Results is: " + numberOfResults);
+
+            DetailsPage detailsPage = resultsPage.goToDetails();
             String details = detailsPage.getDetails();
-            System.out.println(details);
+            System.out.println("The Details of hotel are: " + details);
         }
     }
 
